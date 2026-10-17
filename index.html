@@ -5,179 +5,103 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>baiyangmu</title>
 <meta name="description" content="baiyangmu 的个人主页">
+<meta name="theme-color" content="#05060a">
+<meta property="og:title" content="baiyangmu">
+<meta property="og:description" content="baiyangmu 的个人主页">
+<meta property="og:type" content="website">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🍚</text></svg>">
-<style>
-  :root {
-    --bg: #f6f7f9;
-    --card: #ffffff;
-    --text: #1b1f24;
-    --muted: #656d76;
-    --line: #e3e6ea;
-    --accent: #2563eb;
-    --shadow: 0 1px 2px rgba(16,22,28,.06), 0 8px 24px rgba(16,22,28,.06);
-  }
-  html[data-theme="dark"] {
-    --bg: #0d1117;
-    --card: #161b22;
-    --text: #e6edf3;
-    --muted: #8b949e;
-    --line: #262c36;
-    --accent: #58a6ff;
-    --shadow: 0 1px 2px rgba(0,0,0,.4), 0 8px 24px rgba(0,0,0,.3);
-  }
-  * { box-sizing: border-box; }
-  html { scroll-behavior: smooth; }
-  body {
-    margin: 0;
-    min-height: 100vh;
-    background: var(--bg);
-    color: var(--text);
-    font: 16px/1.65 -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC",
-          "Hiragino Sans GB", "Microsoft YaHei", "Noto Sans SC", sans-serif;
-    -webkit-font-smoothing: antialiased;
-    transition: background .3s, color .3s;
-  }
-  .wrap { max-width: 720px; margin: 0 auto; padding: 56px 20px 80px; }
-
-  .topbar { display: flex; justify-content: flex-end; margin-bottom: -8px; }
-  .icon-btn {
-    width: 38px; height: 38px;
-    display: grid; place-items: center;
-    border: 1px solid var(--line);
-    background: var(--card);
-    color: var(--text);
-    border-radius: 10px;
-    cursor: pointer;
-    font-size: 16px;
-    transition: transform .15s, border-color .15s;
-  }
-  .icon-btn:hover { transform: translateY(-2px); border-color: var(--accent); }
-
-  .hero { text-align: center; margin: 24px 0 44px; }
-  .avatar {
-    width: 108px; height: 108px;
-    border-radius: 50%;
-    border: 1px solid var(--line);
-    background: var(--card);
-    object-fit: cover;
-    display: block;
-    margin: 0 auto 20px;
-  }
-  .hero h1 { margin: 0 0 6px; font-size: 30px; letter-spacing: -.02em; }
-  .hero .handle { color: var(--muted); font-size: 15px; font-family: ui-monospace, SFMono-Regular, Consolas, monospace; }
-  .hero p.tagline { margin: 16px auto 0; max-width: 480px; color: var(--muted); }
-
-  h2 {
-    font-size: 13px;
-    text-transform: uppercase;
-    letter-spacing: .09em;
-    color: var(--muted);
-    margin: 40px 0 14px;
-    font-weight: 600;
-  }
-
-  .links { display: grid; gap: 10px; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); }
-  .links a {
-    display: flex; align-items: center; gap: 12px;
-    padding: 14px 16px;
-    background: var(--card);
-    border: 1px solid var(--line);
-    border-radius: 12px;
-    color: var(--text);
-    text-decoration: none;
-    box-shadow: var(--shadow);
-    transition: transform .15s, border-color .15s;
-  }
-  .links a:hover { transform: translateY(-2px); border-color: var(--accent); }
-  .links .ico { font-size: 18px; }
-  .links .lbl { font-weight: 500; }
-  .links .sub { display: block; font-size: 13px; color: var(--muted); font-weight: 400; }
-
-  .card {
-    background: var(--card);
-    border: 1px solid var(--line);
-    border-radius: 12px;
-    padding: 18px 20px;
-    box-shadow: var(--shadow);
-  }
-  .card ul { margin: 0; padding-left: 20px; }
-  .card li { margin: 6px 0; }
-  .card li::marker { color: var(--accent); }
-
-  footer {
-    margin-top: 56px;
-    padding-top: 20px;
-    border-top: 1px solid var(--line);
-    text-align: center;
-    color: var(--muted);
-    font-size: 13px;
-  }
-  footer a { color: var(--muted); }
-  @media (max-width: 480px) {
-    .wrap { padding: 32px 16px 60px; }
-    .hero h1 { font-size: 24px; }
-  }
-</style>
+<link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <div class="wrap">
-    <div class="topbar">
-      <button class="icon-btn" id="themeBtn" title="切换深色/浅色" aria-label="切换深色/浅色">🌙</button>
+
+<div class="progress"><i id="progressBar"></i></div>
+
+<canvas id="fx" aria-hidden="true"></canvas>
+<div class="aurora" aria-hidden="true"><span></span><span></span><span></span></div>
+<div class="grid-bg" aria-hidden="true"></div>
+<div class="noise" aria-hidden="true"></div>
+
+<div class="cursor" id="cursor" aria-hidden="true"></div>
+<div class="cursor-ring" id="cursorRing" aria-hidden="true"></div>
+
+<main>
+
+  <header class="hero" id="top">
+    <div class="avatar-wrap" data-rv>
+      <div class="ring" aria-hidden="true"></div>
+      <img class="avatar" src="https://avatars.githubusercontent.com/u/174950627?v=4"
+           alt="baiyangmu 的头像" width="128" height="128">
     </div>
 
-    <header class="hero">
-      <img class="avatar" src="https://avatars.githubusercontent.com/u/174950627?v=4" alt="baiyangmu 的头像" width="108" height="108">
-      <h1>baiyangmu</h1>
-      <div class="handle">@baiyangmuzz</div>
-      <!-- ↓↓↓ 改这里，写一句自我介绍 ↓↓↓ -->
-      <p class="tagline">这里放你的自我介绍，一两句话就好。</p>
-    </header>
+    <h1 class="title glitch" data-text="baiyangmu" data-rv>baiyangmu</h1>
+    <p class="handle" data-rv>@baiyangmuzz</p>
+    <p class="typed-line"><span id="typed"></span><i class="caret"></i></p>
+  </header>
 
-    <h2>链接</h2>
-    <div class="links">
-      <!-- ↓↓↓ 改 href 和文字，加/删卡片即可 ↓↓↓ -->
-      <a href="https://github.com/baiyangmuzz" target="_blank" rel="noopener">
-        <span class="ico">🐙</span>
-        <span><span class="lbl">GitHub</span><span class="sub">github.com/baiyangmuzz</span></span>
-      </a>
-      <a href="#" target="_blank" rel="noopener">
-        <span class="ico">📧</span>
-        <span><span class="lbl">Email</span><span class="sub">你的邮箱地址</span></span>
-      </a>
+  <div class="ticker" data-rv aria-hidden="true">
+    <div class="ticker-track">
+      <span>✦ DESIGN</span><span>✦ CODE</span><span>✦ BUILD</span><span>✦ SHIP</span><span>✦ REPEAT</span>
+      <span>✦ DESIGN</span><span>✦ CODE</span><span>✦ BUILD</span><span>✦ SHIP</span><span>✦ REPEAT</span>
     </div>
-
-    <h2>关于</h2>
-    <div class="card">
-      <ul>
-        <!-- ↓↓↓ 改这里 ↓↓↓ -->
-        <li>在做什么：</li>
-        <li>在研究：</li>
-        <li>联系方式：</li>
-      </ul>
-    </div>
-
-    <footer>
-      由 <a href="https://pages.github.com" target="_blank" rel="noopener">GitHub Pages</a> 强力驱动
-    </footer>
   </div>
 
-<script>
-  const root = document.documentElement;
-  const btn = document.getElementById('themeBtn');
-  const saved = localStorage.getItem('theme');
-  const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-  let theme = saved || (prefersDark ? 'dark' : 'light');
+  <section class="sec" id="links">
+    <h2 class="sec-title" data-rv><span>01</span> 链接</h2>
+    <div class="grid">
+      <!-- ↓↓↓ 加/删卡片：复制一个 <a class="card tilt"> 即可 ↓↓↓ -->
+      <a class="card tilt" href="https://github.com/baiyangmuzz" target="_blank" rel="noopener" data-rv>
+        <span class="card-ico">⌨</span>
+        <span class="card-body">
+          <strong>GitHub</strong>
+          <small>github.com/baiyangmuzz</small>
+        </span>
+        <span class="card-arrow">→</span>
+      </a>
+      <a class="card tilt" href="#" data-rv>
+        <span class="card-ico">✉</span>
+        <span class="card-body">
+          <strong>Email</strong>
+          <small>你的邮箱地址</small>
+        </span>
+        <span class="card-arrow">→</span>
+      </a>
+      <!-- ↑↑↑ ↑↑↑ ↑↑↑ -->
+    </div>
+  </section>
 
-  function apply() {
-    root.dataset.theme = theme;
-    btn.textContent = theme === 'dark' ? '☀️' : '🌙';
-  }
-  btn.addEventListener('click', () => {
-    theme = theme === 'dark' ? 'light' : 'dark';
-    localStorage.setItem('theme', theme);
-    apply();
-  });
-  apply();
-</script>
+  <section class="sec" id="about">
+    <h2 class="sec-title" data-rv><span>02</span> 关于</h2>
+    <div class="panel" data-rv>
+      <ul class="facts">
+        <!-- ↓↓↓ 改这里 ↓↓↓ -->
+        <li><b>在做</b><span>在做什么</span></li>
+        <li><b>研究</b><span>在研究什么</span></li>
+        <li><b>坐标</b><span>所在城市</span></li>
+        <li><b>联系</b><span>怎么找到我</span></li>
+        <!-- ↑↑↑ ↑↑↑ -->
+      </ul>
+    </div>
+  </section>
+
+  <section class="sec" id="stats">
+    <h2 class="sec-title" data-rv><span>03</span> 此刻</h2>
+    <div class="grid grid-3">
+      <div class="stat" data-rv><b id="clock">--:--:--</b><small>本地时间</small></div>
+      <div class="stat" data-rv><b id="uptime">--</b><small>已上线</small></div>
+      <div class="stat" data-rv><b>100%</b><small>折腾热情</small></div>
+    </div>
+  </section>
+
+</main>
+
+<footer class="foot">
+  <span>© <span id="year"></span> baiyangmu</span>
+  <span class="dot"></span>
+  <span>Powered by GitHub Pages</span>
+</footer>
+
+<a class="totop" href="#top" aria-label="回到顶部">↑</a>
+
+<script src="app.js"></script>
 </body>
 </html>

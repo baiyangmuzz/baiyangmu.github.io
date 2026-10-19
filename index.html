@@ -573,10 +573,23 @@ body.ready .hero__title .char{
 [data-anim="stagger"].play .stagger-list li:nth-child(5){animation-delay:.33s}
 @keyframes staggerIn{to{opacity:1;transform:none}}
 
-[data-anim="typewriter"] .t-type{
+[data-anim="typewriter"] .t-wrap{
   font:700 26px/1 ui-monospace,"SF Mono",monospace;
-  letter-spacing:.08em;display:inline-block;
+  letter-spacing:.08em;
+  display:inline-grid;
+  overflow:hidden;
+  padding-right:2px;
+}
+[data-anim="typewriter"] .t-wrap::before{
+  content:attr(data-text);
+  grid-area:1/1;
+  visibility:hidden;
+}
+[data-anim="typewriter"] .t-type{
+  grid-area:1/1;
+  display:block;
   white-space:nowrap;overflow:hidden;
+  box-sizing:content-box;
   border-right:2px solid var(--fg);width:0;
 }
 [data-anim="typewriter"].play .t-type{
@@ -1921,21 +1934,33 @@ const DEMOS = {
   ],
   text: [
     { id:'typewriter', name:'Typewriter', tag:'打字机',
-      html:'<span class="t-type">RESTRAINT</span>',
-      code:`/* Typewriter */
-@keyframes typewriter { to { width: 100% } }
-@keyframes blinkCursor {
-  50% { border-color: transparent }
+      html:'<span class="t-wrap" data-text="RESTRAINT"><span class="t-type">RESTRAINT</span></span>',
+      code:`/* Typewriter · 外层隐形副本撑出自然宽度（居中用），内层做揭示 */
+.t-wrap {
+  display: inline-grid;          /* 两元素同格堆叠 */
+  overflow: hidden;
+  padding-right: 2px;
 }
-.el {
-  display: inline-block;
+.t-wrap::before {
+  content: attr(data-text);     /* 隐形副本，只参与宽度计算 */
+  grid-area: 1 / 1;
+  visibility: hidden;
+}
+.t-type {
+  grid-area: 1 / 1;             /* 叠在同一格，随宽度揭示 */
+  display: block;
   white-space: nowrap;
   overflow: hidden;
-  width: 0;
+  box-sizing: content-box;      /* 2px 光标不占内容宽 */
   border-right: 2px solid currentColor;
+  width: 0;
   animation:
     typewriter 1.5s steps(9,end) forwards,
     blinkCursor .8s step-end infinite;
+}
+@keyframes typewriter { to { width: 100% } }
+@keyframes blinkCursor {
+  50% { border-color: transparent }
 }` },
     { id:'scramble', name:'Scramble', tag:'乱码解码',
       html:'<span class="t-scramble">MUSEUM</span>',

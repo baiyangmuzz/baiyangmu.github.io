@@ -574,13 +574,13 @@ body.ready .hero__title .char{
 @keyframes staggerIn{to{opacity:1;transform:none}}
 
 [data-anim="typewriter"]{
-  --n:9;         /* 字数，jsHandlers 会自动改写 */
-  --steps:10;    /* 步数 = 字数 + 1 */
+  --steps:10;    /* 步数 = 字数 + 1，jsHandlers 会自动改写 */
   --dur:1.5s;
   --tracking:.08em;
+  --w:11ch;      /* 兜底宽度，正常由 JS 实测写入 */
 }
 [data-anim="typewriter"] .t-type{
-  font:700 26px/1 ui-monospace,"SF Mono",monospace;
+  font:700 26px/1.25 ui-monospace,"SF Mono",monospace;
   letter-spacing:var(--tracking);display:inline-block;
   white-space:nowrap;overflow:hidden;
   box-sizing:content-box;
@@ -590,9 +590,7 @@ body.ready .hero__title .char{
   animation:typewriter var(--dur) steps(var(--steps),end) forwards,
             blinkCursor .8s step-end infinite;
 }
-@keyframes typewriter{
-  to{width:calc(var(--n)*1ch + var(--n)*var(--tracking))}
-}
+@keyframes typewriter{to{width:var(--w)}}
 @keyframes blinkCursor{50%{border-color:transparent}}
 
 [data-anim="scramble"] .t-scramble{
@@ -1932,12 +1930,11 @@ const DEMOS = {
     { id:'typewriter', name:'Typewriter', tag:'打字机',
       html:'<span class="t-type">RESTRAINT</span>',
       code:`/* Typewriter */
-[data-anim]{
-  --n: 9;        /* 字数 */
-  --steps: 10;   /* 步数 = 字数 + 1 */
-  --tracking: .08em;
-}
 .t-type {
+  /* 行高必须大于字体的升降部总高(约 1.17em)，
+     否则 overflow:hidden 会把字上下削平 */
+  font: 700 26px/1.25 ui-monospace, monospace;
+  letter-spacing: .08em;
   display: inline-block;
   white-space: nowrap;
   overflow: hidden;
@@ -1950,13 +1947,20 @@ const DEMOS = {
     blinkCursor .8s step-end infinite;
 }
 @keyframes typewriter {
-  /* 终点 = n 个字宽 + n 份字距。
-     不能用 100%，那是容器宽，会把文字顶到边上并拖出一片空白 */
-  to { width: calc(var(--n)*1ch + var(--n)*var(--tracking)) }
+  /* 终点宽度用实测值，不用 100%（那是容器宽）也不用 1ch 估算 */
+  to { width: var(--w) }
 }
 @keyframes blinkCursor {
   50% { border-color: transparent }
-}` },
+}
+
+/* JS：实测文字宽度 + 自动数出步数 */
+const r = document.createRange();
+r.selectNodeContents(node);              // Range 取的是排版宽度，
+el.style.setProperty('--w',
+  r.getBoundingClientRect().width + 'px');
+el.style.setProperty('--steps',
+  [...node.textContent.trim()].length + 1);` },
     { id:'scramble', name:'Scramble', tag:'乱码解码',
       html:'<span class="t-scramble">MUSEUM</span>',
       code:`/* Scramble · JS 驱动 */
@@ -2552,7 +2556,9 @@ const jsHandlers = {
     const node = el.querySelector('.t-type');
     if (!node) return;
     const len = [...node.textContent.trim()].length;
-    el.style.setProperty('--n', len);
+    const r = document.createRange();
+    r.selectNodeContents(node);
+    el.style.setProperty('--w', r.getBoundingClientRect().width + 'px');
     el.style.setProperty('--steps', len + 1);
   },
   scramble(el){
